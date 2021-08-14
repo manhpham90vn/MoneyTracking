@@ -18,7 +18,7 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
     let interactor: AddInteractorInterface
 
     let activityIndicator = ActivityIndicator()
-    let trigger = PublishRelay<Void>()
+    let trigger = PublishRelay<Transaction>()
 
     init(view: AddViewInterface,
          router: AddRouterInterface,
@@ -26,6 +26,14 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         self.view = view
         self.router = router
         self.interactor = interactor
+        
+        trigger
+            .subscribe(onNext: { [weak self] value in
+                guard let self = self else { return }
+                self.interactor.addNewTransaction(transaction: value)
+                self.router.back()
+            })
+            ~ disposeBag
     }
 
     deinit {

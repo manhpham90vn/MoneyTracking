@@ -8,7 +8,7 @@
 import UIKit
 
 protocol HomeRouterInterface {
-    
+    func toAdd()
 }
 
 final class HomeRouter: HomeRouterInterface, Router {
@@ -18,12 +18,17 @@ final class HomeRouter: HomeRouterInterface, Router {
     required init(viewController: HomeViewController) {
         self.viewController = viewController
         viewController.presenter = HomePresenter(view: viewController,
-                                                   router: self,
-                                                   interactor: HomeInteractor())
+                                                 router: self,
+                                                 interactor: HomeInteractor())
     }
 
     deinit {
         LogInfo("\(type(of: self)) Deinit")
+    }
+    
+    func toAdd() {
+        let vc = AppScenes.add.viewController
+        viewController.navigationController?.pushViewController(vc, animated: true)
     }
 
 }

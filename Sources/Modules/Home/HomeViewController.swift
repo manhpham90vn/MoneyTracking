@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HomeViewController: BaseViewController {
+final class HomeViewController: BaseTableViewViewController {
     
     var presenter: HomePresenter!
 
@@ -22,18 +22,30 @@ final class HomeViewController: BaseViewController {
 
     override func setupUI() {
         super.setupUI()
+        
+        let addBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
+        navigationItem.rightBarButtonItem = addBtn
+        tableView.register(cellType: HomeTableViewCell.self)
     }    
 
     override func bindDatas() {
         super.bindDatas()
         
         presenter.bind(isLoading: isLoading)
+        presenter.bind(paggingable: self)
+        Observable.just(()) ~> presenter.trigger ~ disposeBag
+        presenter.elements.bind(to: tableView.rx.items(cellIdentifier: HomeTableViewCell.reuseIdentifier,
+                                                       cellType: HomeTableViewCell.self)) { _, element, cell in
+            
+        }
+        ~ disposeBag
+    }
+    
+    @objc
+    func handleAdd() {
+        presenter.handleAdd()
     }
     
 }
 
-extension HomeViewController: HomeViewInterface {
-    func showAlert(title: String, message: String) {
-
-    }
-}
+extension HomeViewController: HomeViewInterface {}

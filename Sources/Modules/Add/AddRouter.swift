@@ -8,7 +8,7 @@
 import UIKit
 
 protocol AddRouterInterface {
-    
+    func back()
 }
 
 final class AddRouter: AddRouterInterface, Router {
@@ -18,12 +18,16 @@ final class AddRouter: AddRouterInterface, Router {
     required init(viewController: AddViewController) {
         self.viewController = viewController
         viewController.presenter = AddPresenter(view: viewController,
-                                                   router: self,
-                                                   interactor: AddInteractor())
+                                                router: self,
+                                                interactor: AddInteractor())
     }
 
     deinit {
         LogInfo("\(type(of: self)) Deinit")
+    }
+    
+    func back() {
+        viewController.navigationController?.popViewController(animated: true)
     }
 
 }

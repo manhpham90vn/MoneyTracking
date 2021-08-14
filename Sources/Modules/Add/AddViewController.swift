@@ -9,6 +9,9 @@ import UIKit
 
 final class AddViewController: BaseViewController {
     
+    @IBOutlet weak var noteTextField: UITextField!
+    @IBOutlet weak var addButton: UIButton!
+    
     var presenter: AddPresenter!
 
     deinit {
@@ -28,12 +31,14 @@ final class AddViewController: BaseViewController {
         super.bindDatas()
         
         presenter.bind(isLoading: isLoading)
+        addButton
+            .rx
+            .tap
+            .mapTo(Transaction(id: UUID().uuidString, amount: nil, currency: nil, content: noteTextField.text, date: nil))
+        ~> presenter.trigger
+        ~ disposeBag
     }
     
 }
 
-extension AddViewController: AddViewInterface {
-    func showAlert(title: String, message: String) {
-
-    }
-}
+extension AddViewController: AddViewInterface {}
