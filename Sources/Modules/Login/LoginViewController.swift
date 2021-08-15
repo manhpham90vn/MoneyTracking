@@ -11,9 +11,9 @@ final class LoginViewController: BaseViewController {
     
     var presenter: LoginPresenter!
     
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var loginButton: UIButton!
-    @IBOutlet weak var registerButton: UIButton!
+    @IBOutlet private weak var emailTextField: UITextField!
+    @IBOutlet private weak var loginButton: UIButton!
+    @IBOutlet private weak var registerButton: UIButton!
     
     deinit {
         LogInfo("\(type(of: self)) Deinit")

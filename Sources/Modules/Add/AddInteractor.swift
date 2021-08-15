@@ -6,7 +6,7 @@
 //
 
 protocol AddInteractorInterface {
-    func addNewTransaction(transaction: Transaction)
+    func addNewTransaction(transaction: Transaction) -> Single<Bool>
 }
 
 final class AddInteractor: AddInteractorInterface {
@@ -18,9 +18,11 @@ final class AddInteractor: AddInteractorInterface {
         LogInfo("\(type(of: self)) Deinit")
     }
     
-    func addNewTransaction(transaction: Transaction) {
+    func addNewTransaction(transaction: Transaction) -> Single<Bool> {
         if let user = auth.currentUser {
-            database.createTransaction(email: user, transaction: transaction.asRealm())
+            return database.createTransaction(email: user, transaction: transaction.asRealm())
+        } else {
+            return .just(false)
         }
     }
 

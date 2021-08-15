@@ -9,8 +9,8 @@ import UIKit
 
 final class AddViewController: BaseViewController {
     
-    @IBOutlet weak var noteTextField: UITextField!
-    @IBOutlet weak var addButton: UIButton!
+    @IBOutlet private weak var noteTextField: UITextField!
+    @IBOutlet private weak var addButton: UIButton!
     
     var presenter: AddPresenter!
 
@@ -31,12 +31,19 @@ final class AddViewController: BaseViewController {
         super.bindDatas()
         
         presenter.bind(isLoading: isLoading)
-        addButton
-            .rx
-            .tap
-            .mapTo(Transaction(id: UUID().uuidString, amount: nil, currency: nil, content: noteTextField.text, date: nil))
-        ~> presenter.trigger
-        ~ disposeBag
+        
+        disposeBag ~ [
+            addButton
+                .rx
+                .tap
+                .map { [weak self] in Transaction(id: UUID().uuidString,
+                                                  amount: nil,
+                                                  currency: nil,
+                                                  content: self?.noteTextField.text,
+                                                  date: Date())
+                }
+            ~> presenter.trigger
+        ]
     }
     
 }

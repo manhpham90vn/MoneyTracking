@@ -11,9 +11,9 @@ final class RegisterViewController: BaseViewController {
     
     var presenter: RegisterPresenter!
     
-    @IBOutlet weak var emailTextField: UITextField!
-    @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var registerButton: UIButton!
+    @IBOutlet private weak var emailTextField: UITextField!
+    @IBOutlet private weak var nameTextField: UITextField!
+    @IBOutlet private weak var registerButton: UIButton!
     
     deinit {
         LogInfo("\(type(of: self)) Deinit")

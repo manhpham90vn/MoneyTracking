@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import MJRefresh
 
 final class HomeViewController: BaseTableViewViewController {
     
@@ -33,17 +34,29 @@ final class HomeViewController: BaseTableViewViewController {
         
         presenter.bind(isLoading: isLoading)
         presenter.bind(paggingable: self)
-        Observable.just(()) ~> presenter.trigger ~ disposeBag
-        presenter.elements.bind(to: tableView.rx.items(cellIdentifier: HomeTableViewCell.reuseIdentifier,
-                                                       cellType: HomeTableViewCell.self)) { _, element, cell in
+        
+        disposeBag ~ [
+            Observable.merge(rx.viewWillAppear.mapTo(()),
+                             headerRefreshTrigger.asObservable())
+                ~> presenter.trigger,
             
-        }
-        ~ disposeBag
+            rx.viewWillAppear.mapTo(())
+                ~> presenter.trigger,
+            
+            presenter.elements.bind(to: tableView.rx.items(cellIdentifier: HomeTableViewCell.reuseIdentifier,
+                                                           cellType: HomeTableViewCell.self)) { _, element, cell in
+                cell.config(transaction: element)
+            }
+        ]
     }
     
     @objc
     func handleAdd() {
         presenter.handleAdd()
+    }
+    
+    override func tableViewFooter() -> MJRefreshFooter? {
+        nil
     }
     
 }

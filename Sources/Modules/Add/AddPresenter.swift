@@ -27,13 +27,25 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         self.router = router
         self.interactor = interactor
         
-        trigger
-            .subscribe(onNext: { [weak self] value in
-                guard let self = self else { return }
-                self.interactor.addNewTransaction(transaction: value)
-                self.router.back()
-            })
-            ~ disposeBag
+        disposeBag ~ [
+            trigger
+                .withUnretained(self)
+                .flatMapLatest { vc, obj -> Observable<Void> in
+                    return vc.interactor.addNewTransaction(transaction: obj)
+                        .asObservable()
+                        .flatMap { result -> Observable<Void> in
+                            if result {
+                                return vc.view.showAlert(title: "Success", message: "")
+                                    .do(onNext: {
+                                        vc.router.back()
+                                    })
+                            } else {
+                                return vc.view.showAlert(title: "Error", message: "")
+                            }
+                        }
+                }
+                .subscribe()
+        ]
     }
 
     deinit {

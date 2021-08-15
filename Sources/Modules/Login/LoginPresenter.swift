@@ -29,30 +29,31 @@ final class LoginPresenter: LoginPresenterInterface, HasActivityIndicator, HasDi
         self.router = router
         self.interactor = interactor
         
-        trigger
-            .withUnretained(self)
-            .flatMapLatest { vc, obj -> Observable<Void> in
-                if obj.isValidEmail() {
-                    return vc.interactor.login(email: obj)
-                        .asObservable()
-                        .flatMap { result -> Observable<Void> in
-                            if result {
-                                return vc.view
-                                    .showAlert(title: "OK", message: "Đăng Nhập Thành Công")
-                                    .do(onNext: {
-                                        vc.interactor.saveUser(email: obj)
-                                        vc.router.toHome()
-                                    })
-                            } else {
-                                return vc.view.showAlert(title: "OK", message: "Đăng nhập thất bại")
+        disposeBag ~ [
+            trigger
+                .withUnretained(self)
+                .flatMapLatest { vc, obj -> Observable<Void> in
+                    if obj.isValidEmail() {
+                        return vc.interactor.login(email: obj)
+                            .asObservable()
+                            .flatMap { result -> Observable<Void> in
+                                if result {
+                                    return vc.view
+                                        .showAlert(title: "OK", message: "Đăng Nhập Thành Công")
+                                        .do(onNext: {
+                                            vc.interactor.saveUser(email: obj)
+                                            vc.router.toHome()
+                                        })
+                                } else {
+                                    return vc.view.showAlert(title: "OK", message: "Đăng nhập thất bại")
+                                }
                             }
-                        }
-                } else {
-                    return vc.view.showAlert(title: "ERROR", message: "sai dinh dang")
+                    } else {
+                        return vc.view.showAlert(title: "ERROR", message: "sai dinh dang")
+                    }
                 }
-            }
-            .subscribe()
-            ~ disposeBag
+                .subscribe()
+        ]
     }
 
     deinit {

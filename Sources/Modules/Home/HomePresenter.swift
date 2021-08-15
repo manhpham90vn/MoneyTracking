@@ -37,11 +37,12 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
         self.router = router
         self.interactor = interactor
         
-        trigger
-            .withUnretained(self)
-            .flatMapLatest { $0.0.interactor.getAllItem() }
-        ~> elements
-        ~ disposeBag
+        disposeBag ~ [
+            trigger
+                .withUnretained(self)
+                .flatMapLatest { $0.0.interactor.getAllItem() }
+            ~> elements
+        ]
     }
 
     deinit {
