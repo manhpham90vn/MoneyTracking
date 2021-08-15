@@ -37,8 +37,8 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
                                 if result {
                                     return vc.view
                                         .showAlert(title: "Success", message: "Create user success")
-                                        .do(onNext: { [weak self] in
-                                            self?.router.back()
+                                        .do(onNext: { [weak vc] in
+                                            vc?.router.back()
                                         })
                                 } else {
                                     return vc.view
@@ -64,6 +64,6 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
 
 extension User {
     fileprivate func isValid() -> Bool {
-        return email.isValidEmail() && (name?.count ?? 0) > 0
+        return email.isValidEmail()
     }
 }
