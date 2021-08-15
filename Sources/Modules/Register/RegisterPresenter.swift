@@ -33,12 +33,13 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
                 .flatMapLatest { vc, obj -> Observable<Void> in
                     if obj.isValid() {
                         return vc.interactor.createUser(user: obj)
+                            .asObservable()
                             .flatMap { result -> Observable<Void> in
                                 if result {
                                     return vc.view
                                         .showAlert(title: "Success", message: "Create user success")
-                                        .do(onNext: { [weak vc] in
-                                            vc?.router.back()
+                                        .do(onNext: {
+                                            vc.router.back()
                                         })
                                 } else {
                                     return vc.view

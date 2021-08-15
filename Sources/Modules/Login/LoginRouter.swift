@@ -9,6 +9,7 @@ import UIKit
 
 protocol LoginRouterInterface {
     func toRegister()
+    func toHome()
 }
 
 final class LoginRouter: LoginRouterInterface, Router {
@@ -29,6 +30,11 @@ final class LoginRouter: LoginRouterInterface, Router {
     func toRegister() {
         let vc = AppScenes.register.viewController
         viewController.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func toHome() {
+        let vc = AppScenes.home.viewController
+        UIWindow.shared?.rootViewController = UINavigationController(rootViewController: vc)
     }
 
 }

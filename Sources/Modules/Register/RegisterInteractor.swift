@@ -6,7 +6,7 @@
 //
 
 protocol RegisterInteractorInterface {
-    func createUser(user: User) -> Observable<Bool>
+    func createUser(user: User) -> Single<Bool>
 }
 
 final class RegisterInteractor: RegisterInteractorInterface {
@@ -17,7 +17,7 @@ final class RegisterInteractor: RegisterInteractorInterface {
         LogInfo("\(type(of: self)) Deinit")
     }
     
-    func createUser(user: User) -> Observable<Bool> {
+    func createUser(user: User) -> Single<Bool> {
         database.createUser(user: user.asRealm())
     }
 

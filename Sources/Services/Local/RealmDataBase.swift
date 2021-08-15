@@ -9,12 +9,12 @@ import Foundation
 import RealmSwift
 
 protocol RealmDataBaseInterface {
-    func createUser(user: RMUser) -> Observable<Bool>
-    func login(email: String) -> Bool
-    func allTransactions(email: String) -> [RMTransaction]
-    func createTransaction(email: String, transaction: RMTransaction)
-    func updateTransaction(transaction: RMTransaction)
-    func deleteTransaction(transactionId: String)
+    func createUser(user: RMUser) -> Single<Bool>
+    func login(email: String) -> Single<Bool>
+    func allTransactions(email: String) -> Single<[RMTransaction]>
+    func createTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
+    func updateTransaction(transaction: RMTransaction) -> Single<Bool>
+    func deleteTransaction(transactionId: String) -> Single<Bool>
 }
 
 final class RealmDataBase: RealmDataBaseInterface {
@@ -25,58 +25,82 @@ final class RealmDataBase: RealmDataBaseInterface {
         LogInfo(Realm.Configuration.defaultConfiguration.fileURL?.absoluteString ?? "")
     }
     
-    func createUser(user: RMUser) -> Observable<Bool> {
-        Observable<Bool>.create { [weak self] observer in
+    func createUser(user: RMUser) -> Single<Bool> {
+        Single<Bool>.create { [weak self] single in
             if self?.realm?.object(ofType: RMUser.self, forPrimaryKey: user.email) != nil {
-                observer.onNext(false)
-                observer.onCompleted()
+                single(.success(false))
             } else {
                 try? self?.realm?.write {
                     self?.realm?.add(user)
-                    observer.onNext(true)
-                    observer.onCompleted()
+                    single(.success(true))
                 }
             }
             return Disposables.create()
         }
     }
     
-    func login(email: String) -> Bool {
-        if realm?.object(ofType: RMUser.self, forPrimaryKey: email) != nil {
-            return true
-        }
-        return false
-    }
-    
-    func allTransactions(email: String) -> [RMTransaction] {
-        if let user = realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
-            return Array(user.transactions)
-        }
-        return []
-    }
-    
-    func createTransaction(email: String, transaction: RMTransaction) {
-        if let user = realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
-            try? realm?.write {
-                user.transactions.append(transaction)
+    func login(email: String) -> Single<Bool> {
+        Single<Bool>.create { [weak self] single in
+            if self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) != nil {
+                single(.success(true))
+            } else {
+                single(.success(false))
             }
+            return Disposables.create()
         }
     }
     
-    func updateTransaction(transaction: RMTransaction) {
-        if let transactionToUpdate = realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id) {
-            try? realm?.write {
-                transactionToUpdate.amount = transaction.amount
-                transactionToUpdate.content = transaction.content
+    func allTransactions(email: String) -> Single<[RMTransaction]> {
+        Single<[RMTransaction]>.create { [weak self] single in
+            if let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
+                single(.success(Array(user.transactions)))
+            } else {
+                single(.success([]))
             }
+            return Disposables.create()
         }
     }
     
-    func deleteTransaction(transactionId: String) {
-        if let transaction = realm?.object(ofType: RMTransaction.self, forPrimaryKey: transactionId) {
-            try? realm?.write {
-                realm?.delete(transaction)
+    func createTransaction(email: String, transaction: RMTransaction) -> Single<Bool> {
+        Single<Bool>.create { [weak self] single in
+            if let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
+                try? self?.realm?.write {
+                    user.transactions.append(transaction)
+                    single(.success(true))
+                }
+            } else {
+                single(.success(false))
             }
+            return Disposables.create()
+        }
+    }
+    
+    func updateTransaction(transaction: RMTransaction) -> Single<Bool> {
+        Single<Bool>.create { [weak self] single in
+            if let transactionToUpdate = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id) {
+                try? self?.realm?.write {
+                    transactionToUpdate.amount = transaction.amount
+                    transactionToUpdate.content = transaction.content
+                    single(.success(true))
+                }
+            } else {
+                single(.success(false))
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func deleteTransaction(transactionId: String) -> Single<Bool> {
+        Single<Bool>.create { [weak self] single in
+            if let transaction = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transactionId) {
+                try? self?.realm?.write {
+                    self?.realm?.delete(transaction)
+                    single(.success(true))
+                }
+            } else {
+                single(.success(false))
+            }
+            return Disposables.create()
         }
     }
 }

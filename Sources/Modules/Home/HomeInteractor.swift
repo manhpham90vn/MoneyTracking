@@ -20,7 +20,9 @@ final class HomeInteractor: HomeInteractorInterface {
     
     func getAllItem() -> Single<[Transaction]> {
         if let user = auth.currentUser {
-            return .just(database.allTransactions(email: user).map { $0.asDomain() })
+            return database.allTransactions(email: user).map { obj -> [Transaction] in
+                obj.map { $0.asDomain() }
+            }
         }
         return .just([])
     }

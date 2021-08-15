@@ -38,7 +38,8 @@ final class RegisterViewController: BaseViewController {
                 .tap
                 .map { [weak self] in User(email: self?.emailTextField.text ?? "",
                                            name: self?.nameTextField.text,
-                                           transactions: nil) }
+                                           transactions: nil)
+                }
                 ~> presenter.trigger
         ]
     }

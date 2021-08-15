@@ -34,7 +34,7 @@ final class AuthManager: AuthManagerInterface {
     var currentUser: String?
     
     var isLogin: Bool {
-        return token != nil
+        return currentUser != nil
     }
     
     func logOut() {
