@@ -8,7 +8,7 @@
 import UIKit
 
 protocol LoginRouterInterface {
-    
+    func toRegister()
 }
 
 final class LoginRouter: LoginRouterInterface, Router {
@@ -18,12 +18,17 @@ final class LoginRouter: LoginRouterInterface, Router {
     required init(viewController: LoginViewController) {
         self.viewController = viewController
         viewController.presenter = LoginPresenter(view: viewController,
-                                                   router: self,
-                                                   interactor: LoginInteractor())
+                                                  router: self,
+                                                  interactor: LoginInteractor())
     }
 
     deinit {
         LogInfo("\(type(of: self)) Deinit")
+    }
+    
+    func toRegister() {
+        let vc = AppScenes.register.viewController
+        viewController.navigationController?.pushViewController(vc, animated: true)
     }
 
 }

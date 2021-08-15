@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 final class RMUser: Object {
-    @Persisted(primaryKey: true) var email: String?
+    @Persisted(primaryKey: true) var email: String
     @Persisted var name: String?
     @Persisted var transactions: List<RMTransaction>
 }

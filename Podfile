@@ -25,5 +25,6 @@ target 'MyApp' do
   pod 'RxViewController'
   pod 'RxSwiftExt', '~> 5'
   pod 'RealmSwift'
+  pod 'IQKeyboardManagerSwift'
 
 end

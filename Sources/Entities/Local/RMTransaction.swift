@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 final class RMTransaction: Object {
-    @Persisted(primaryKey: true) var id: String?
+    @Persisted(primaryKey: true) var id: String
     @Persisted var amount: Int?
     @Persisted var currency: Currency?
     @Persisted var content: String?

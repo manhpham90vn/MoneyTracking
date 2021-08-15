@@ -5,7 +5,7 @@
 //  Created by Manh Pham on 3/16/21.
 //
 
-final class ApiProvider<Target: TargetType>: MoyaProvider<Target> {
+final class ApiProvider<Target: TargetType>: MoyaProvider<Target>, HasDisposeBag {
     
     init(plugins: [PluginType]) {
         super.init(plugins: plugins)
@@ -38,7 +38,7 @@ final class ApiProvider<Target: TargetType>: MoyaProvider<Target> {
                 guard let target = (target as? MultiTarget)?.target as? ApiRouter else { return }
                 guard target.needShowDialogWhenBadStatuCode else { return }
                 if ErrorCode(rawValue: response.statusCode)?.isError ?? false {
-                    AppHelper.shared.showAlert(title: "Đã Xảy ra lỗi", message: "Lỗi không xác định")
+                    AppHelper.shared.showAlert(title: "Đã Xảy ra lỗi", message: "Lỗi không xác định").subscribe() ~ disposeBag
                 }
             default:
                 break
@@ -57,7 +57,7 @@ final class ApiProvider<Target: TargetType>: MoyaProvider<Target> {
                     case .sessionTaskFailed:
                         return AppHelper
                             .shared
-                            .showAlertRx(title: "Không thể kết nối tới máy chủ", message: "Vui lòng kiểm tra kết nối và thử lại", ok: "Tải Lại")
+                            .showAlertConfirm(title: "Không thể kết nối tới máy chủ", message: "Vui lòng kiểm tra kết nối và thử lại", ok: "Tải Lại")
                             .flatMap { [weak self] in
                                 self?.request(target: target) ?? .empty()
                             }

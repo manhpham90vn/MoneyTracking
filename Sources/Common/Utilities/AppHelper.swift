@@ -15,16 +15,25 @@ final class AppHelper {
     
     @Atomic var isShowAlert = false
     
-    func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
-        let vc = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "Chấp Nhận", style: .cancel) { _ in
-            completion?()
+    func showAlert(title: String, message: String, ok: String = "Chấp Nhận") -> Observable<Void> {
+        guard !isShowAlert else { return .empty() }
+        return Observable<Void>.create { [weak self] observer in
+            guard let self = self else { return Disposables.create() }
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(.init(title: ok, style: .default, handler: { [weak self] _ in
+                self?.isShowAlert = false
+                observer.onNext(())
+                observer.onCompleted()
+            }))
+            self.isShowAlert = true
+            AppHelper.shared.topViewController()?.present(alert, animated: true, completion: nil)
+            return Disposables.create {
+                alert.dismiss(animated: true, completion: nil)
+            }
         }
-        vc.addAction(action)
-        UIWindow.shared?.rootViewController?.present(vc, animated: true)
     }
     
-    func showAlertRx(title: String, message: String, cancel: String = "Huỷ", ok: String = "Chấp Nhận") -> Observable<Void> {
+    func showAlertConfirm(title: String, message: String, cancel: String = "Huỷ", ok: String = "Chấp Nhận") -> Observable<Void> {
         guard !isShowAlert else { return .empty() }
         return Observable<Void>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }

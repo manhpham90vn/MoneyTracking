@@ -6,15 +6,15 @@
 //
 
 protocol BaseView: AnyObject {
-    func showAlert(title: String, message: String, completion: (() -> Void)?)
-    func showAlertRx(title: String, message: String) -> Observable<Void>
+    func showAlert(title: String, message: String) -> Observable<Void>
+    func showAlertConfirm(title: String, message: String) -> Observable<Void>
 }
 
 extension BaseView {
-    func showAlert(title: String, message: String, completion: (() -> Void)? = nil) {
-        AppHelper.shared.showAlert(title: title, message: message, completion: completion)
+    func showAlert(title: String, message: String) -> Observable<Void> {
+        AppHelper.shared.showAlert(title: title, message: message)
     }
-    func showAlertRx(title: String, message: String) -> Observable<Void> {
-        AppHelper.shared.showAlertRx(title: title, message: message)
+    func showAlertConfirm(title: String, message: String) -> Observable<Void> {
+        AppHelper.shared.showAlertConfirm(title: title, message: message)
     }
 }

@@ -18,7 +18,7 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
     let interactor: RegisterInteractorInterface
 
     let activityIndicator = ActivityIndicator()
-    let trigger = PublishRelay<Void>()
+    let trigger = PublishRelay<User>()
 
     init(view: RegisterViewInterface,
          router: RegisterRouterInterface,
@@ -26,12 +26,44 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
         self.view = view
         self.router = router
         self.interactor = interactor
+        
+        disposeBag ~ [
+            trigger
+                .withUnretained(self)
+                .flatMapLatest { vc, obj -> Observable<Void> in
+                    if obj.isValid() {
+                        return vc.interactor.createUser(user: obj)
+                            .flatMap { result -> Observable<Void> in
+                                if result {
+                                    return vc.view
+                                        .showAlert(title: "Success", message: "Create user success")
+                                        .do(onNext: { [weak self] in
+                                            self?.router.back()
+                                        })
+                                } else {
+                                    return vc.view
+                                        .showAlert(title: "Error", message: "User Exits")
+                                }
+                            }
+                    } else {
+                        return vc.view
+                            .showAlert(title: "Error", message: "Please check email and name")
+                    }
+                }
+                .subscribe()
+        ]
     }
-
+    
     deinit {
         LogInfo("\(type(of: self)) Deinit")
         LeakDetector.instance.expectDeallocate(object: router as AnyObject)
         LeakDetector.instance.expectDeallocate(object: interactor as AnyObject)
     }
 
+}
+
+extension User {
+    fileprivate func isValid() -> Bool {
+        return email.isValidEmail() && (name?.count ?? 0) > 0
+    }
 }

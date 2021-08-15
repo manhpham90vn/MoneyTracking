@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 protocol RealmDataBaseInterface {
-    func createUser(user: RMUser)
+    func createUser(user: RMUser) -> Observable<Bool>
     func login(email: String) -> Bool
     func allTransactions(email: String) -> [RMTransaction]
     func createTransaction(email: String, transaction: RMTransaction)
@@ -25,9 +25,19 @@ final class RealmDataBase: RealmDataBaseInterface {
         LogInfo(Realm.Configuration.defaultConfiguration.fileURL?.absoluteString ?? "")
     }
     
-    func createUser(user: RMUser) {
-        try? realm?.write {
-            realm?.add(user)
+    func createUser(user: RMUser) -> Observable<Bool> {
+        Observable<Bool>.create { [weak self] observer in
+            if self?.realm?.object(ofType: RMUser.self, forPrimaryKey: user.email) != nil {
+                observer.onNext(false)
+                observer.onCompleted()
+            } else {
+                try? self?.realm?.write {
+                    self?.realm?.add(user)
+                    observer.onNext(true)
+                    observer.onCompleted()
+                }
+            }
+            return Disposables.create()
         }
     }
     
@@ -54,8 +64,7 @@ final class RealmDataBase: RealmDataBaseInterface {
     }
     
     func updateTransaction(transaction: RMTransaction) {
-        if let id = transaction.id,
-           let transactionToUpdate = realm?.object(ofType: RMTransaction.self, forPrimaryKey: id) {
+        if let transactionToUpdate = realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id) {
             try? realm?.write {
                 transactionToUpdate.amount = transaction.amount
                 transactionToUpdate.content = transaction.content

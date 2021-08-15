@@ -9,6 +9,8 @@ protocol LoginPresenterInterface: Presenter {
     var view: LoginViewInterface { get }
     var router: LoginRouterInterface { get }
     var interactor: LoginInteractorInterface { get }
+    
+    func toRegister()
 }
 
 final class LoginPresenter: LoginPresenterInterface, HasActivityIndicator, HasDisposeBag {
@@ -32,6 +34,10 @@ final class LoginPresenter: LoginPresenterInterface, HasActivityIndicator, HasDi
         LogInfo("\(type(of: self)) Deinit")
         LeakDetector.instance.expectDeallocate(object: router as AnyObject)
         LeakDetector.instance.expectDeallocate(object: interactor as AnyObject)
+    }
+    
+    func toRegister() {
+        router.toRegister()
     }
 
 }

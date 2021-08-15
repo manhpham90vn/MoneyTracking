@@ -8,7 +8,7 @@
 import Foundation
 
 struct Transaction {
-    var id: String?
+    var id: String
     var amount: Int?
     var currency: Currency?
     var content: String?

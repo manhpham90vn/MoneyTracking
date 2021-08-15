@@ -1,24 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vKn-9P-Ny8">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="vKn-9P-Ny8">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13527"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--product Name View Controller-->
+        <!--Login View Controller-->
         <scene sceneID="GzV-lN-fg7">
             <objects>
-                <viewController id="vKn-9P-Ny8" customClass="LoginViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="vKn-9P-Ny8" customClass="LoginViewController" customModule="My_App_Debug" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="BNZ-bO-rhc">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="g5R-ie-S9E">
+                                <rect key="frame" x="20" y="272.5" width="335" height="122"/>
+                                <subviews>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter Email" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="TXX-14-4qQ">
+                                        <rect key="frame" x="0.0" y="0.0" width="335" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wcl-sS-dLc">
+                                        <rect key="frame" x="0.0" y="44" width="335" height="34"/>
+                                        <state key="normal" title="Login"/>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="akK-Ec-9zO">
+                                        <rect key="frame" x="0.0" y="88" width="335" height="34"/>
+                                        <state key="normal" title="Register"/>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="TXX-14-4qQ" secondAttribute="trailing" id="1jD-jP-Jus"/>
+                                    <constraint firstAttribute="trailing" secondItem="akK-Ec-9zO" secondAttribute="trailing" id="AGx-Zo-ySK"/>
+                                    <constraint firstItem="TXX-14-4qQ" firstAttribute="leading" secondItem="g5R-ie-S9E" secondAttribute="leading" id="QcE-Vs-jPC"/>
+                                    <constraint firstAttribute="trailing" secondItem="wcl-sS-dLc" secondAttribute="trailing" id="axb-fD-gFi"/>
+                                    <constraint firstItem="akK-Ec-9zO" firstAttribute="leading" secondItem="g5R-ie-S9E" secondAttribute="leading" id="esr-wK-z0m"/>
+                                    <constraint firstItem="wcl-sS-dLc" firstAttribute="leading" secondItem="g5R-ie-S9E" secondAttribute="leading" id="jcJ-9C-YF7"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="HgA-Aw-ocO"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="g5R-ie-S9E" firstAttribute="centerX" secondItem="HgA-Aw-ocO" secondAttribute="centerX" id="G3d-L4-N9h"/>
+                            <constraint firstItem="g5R-ie-S9E" firstAttribute="leading" secondItem="HgA-Aw-ocO" secondAttribute="leading" constant="20" id="RYl-Q2-xQX"/>
+                            <constraint firstItem="g5R-ie-S9E" firstAttribute="centerY" secondItem="HgA-Aw-ocO" secondAttribute="centerY" id="biR-Sz-AiO"/>
+                            <constraint firstItem="HgA-Aw-ocO" firstAttribute="trailing" secondItem="g5R-ie-S9E" secondAttribute="trailing" constant="20" id="jMN-09-pZp"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="emailTextField" destination="TXX-14-4qQ" id="REU-sk-pYX"/>
+                        <outlet property="loginButton" destination="wcl-sS-dLc" id="abe-vf-R6S"/>
+                        <outlet property="registerButton" destination="akK-Ec-9zO" id="UwZ-PC-oT0"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="k0X-am-vwV" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
