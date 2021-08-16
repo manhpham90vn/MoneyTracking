@@ -41,7 +41,7 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { $0.0.interactor.getAllItem() }
+                .flatMapLatest { $0.0.interactor.getAllItem().trackActivity($0.0.headerActivityIndicator) }
             ~> elements
         ]
     }
