@@ -41,10 +41,14 @@ final class RegisterViewController: BaseViewController {
             registerButton
                 .rx
                 .tap
-                .map { [weak self] in User(email: self?.emailTextField.text ?? "",
-                                           name: self?.nameTextField.text,
-                                           transactions: nil)
+                .map { [weak self] _ -> User? in
+                    guard let self = self else { return nil }
+                    return User(email: self.emailTextField.text ?? "",
+                                name: self.nameTextField.text ?? "",
+                                transactions: [],
+                                totalAmount: 0)
                 }
+                .unwrap()
                 ~> presenter.trigger
         ]
     }

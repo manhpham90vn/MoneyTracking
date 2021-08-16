@@ -10,15 +10,16 @@ import RealmSwift
 
 final class RMTransaction: Object {
     @Persisted(primaryKey: true) var id: String
-    @Persisted var amount: Int?
-    @Persisted var currency: Currency?
+    @Persisted var amount: Int
+    @Persisted var currency: Currency
+    @Persisted var type: TransactionType
     @Persisted var content: String?
-    @Persisted var date: Date?
+    @Persisted var date: Date
 }
 
 extension RMTransaction: DomainConvertibleType {
     func asDomain() -> Transaction {
-        Transaction(id: id, amount: amount, currency: currency, content: content, date: date)
+        Transaction(id: id, amount: amount, currency: currency, type: type, content: content, date: date)
     }
 }
 
@@ -28,6 +29,7 @@ extension Transaction: RealmRepresentable {
             $0.id = id
             $0.amount = amount
             $0.currency = currency
+            $0.type = type
             $0.content = content
             $0.date = date
         }

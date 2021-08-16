@@ -66,6 +66,12 @@ final class RealmDataBase: RealmDataBaseInterface {
             if let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
                 try? self?.realm?.write {
                     user.transactions.append(transaction)
+                    switch transaction.type {
+                    case .deposits:
+                        user.totalAmount += transaction.amount
+                    case .withdrawal:
+                        user.totalAmount -= transaction.amount
+                    }
                     single(.success(true))
                 }
             } else {

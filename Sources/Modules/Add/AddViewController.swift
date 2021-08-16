@@ -9,8 +9,26 @@ import UIKit
 
 final class AddViewController: BaseViewController {
     
-    @IBOutlet private weak var noteTextField: UITextField!
+    private let datePicker = UIDatePicker().then {
+        $0.calendar = Calendar(identifier: .gregorian)
+        $0.datePickerMode = .date
+        if #available(iOS 13.4, *) {
+            $0.preferredDatePickerStyle = .wheels
+        }
+    }
+    
+    private let selectCurrency = BehaviorRelay<Currency>(value: .japanse)
+    private let selectTransactionType = BehaviorRelay<TransactionType>(value: .deposits)
+    private let selectDate = BehaviorRelay<Date>(value: Date())
+    
+    @IBOutlet private weak var amountTextField: UITextField!
+    @IBOutlet private weak var contentTextField: UITextField!
+    @IBOutlet private weak var dateTextField: UITextField!
     @IBOutlet private weak var addButton: UIButton!
+    @IBOutlet private weak var currencyStackView: UIStackView!
+    @IBOutlet private weak var currencyStackViewHeightCT: NSLayoutConstraint!
+    @IBOutlet private weak var transactionTypeStackView: UIStackView!
+    @IBOutlet private weak var transactionTypeStackViewHeightCT: NSLayoutConstraint!
     
     var presenter: AddPresenter!
 
@@ -25,6 +43,36 @@ final class AddViewController: BaseViewController {
 
     override func setupUI() {
         super.setupUI()
+        
+        Currency.allCases.forEach {
+            let subview = SelectableView()
+            subview.isSelect = $0 == selectCurrency.value
+            subview.title = "\($0.name) - \($0.symbol)"
+            subview.tag = $0.rawValue
+            subview.onClick = { [weak self] tag in
+                guard let self = self else { return }
+                self.selectCurrency.accept(Currency(rawValue: tag)!)
+            }
+            currencyStackView.addArrangedSubview(subview)
+            subview.trailingAnchor.constraint(equalTo: currencyStackView.trailingAnchor).isActive = true
+        }
+        currencyStackViewHeightCT.constant = CGFloat(Currency.allCases.count * 25)
+        
+        TransactionType.allCases.forEach {
+            let subview = SelectableView()
+            subview.isSelect = $0 == selectTransactionType.value
+            subview.title = $0.title
+            subview.tag = $0.rawValue
+            subview.onClick = { [weak self] tag in
+                guard let self = self else { return }
+                self.selectTransactionType.accept(TransactionType(rawValue: tag)!)
+            }
+            transactionTypeStackView.addArrangedSubview(subview)
+            subview.trailingAnchor.constraint(equalTo: transactionTypeStackView.trailingAnchor).isActive = true
+        }
+        transactionTypeStackViewHeightCT.constant = CGFloat(TransactionType.allCases.count * 25)
+        dateTextField.inputView = datePicker
+        dateTextField.addDoneOnKeyboardWithTarget(self, action: #selector(handleSelectDate))
     }    
 
     override func bindDatas() {
@@ -36,14 +84,31 @@ final class AddViewController: BaseViewController {
             addButton
                 .rx
                 .tap
-                .map { [weak self] in Transaction(id: UUID().uuidString,
-                                                  amount: nil,
-                                                  currency: nil,
-                                                  content: self?.noteTextField.text,
-                                                  date: Date())
+                .map { [weak self] _ -> Transaction? in
+                    guard let self = self else { return nil }
+                    return Transaction(id: UUID().uuidString,
+                                       amount: Int(self.amountTextField.text ?? "0") ?? 0,
+                                       currency: self.selectCurrency.value,
+                                       type: self.selectTransactionType.value,
+                                       content: self.contentTextField.text,
+                                       date: self.selectDate.value)
                 }
-            ~> presenter.trigger
+                .unwrap()
+            ~> presenter.trigger,
+            selectDate.map(mapDateToString) ~> dateTextField.rx.text
         ]
+    }
+    
+    private func mapDateToString(date: Date) -> String {
+        let formater = DateFormatter()
+        formater.dateFormat = "yyyy/MM/dd"
+        return formater.string(from: date)
+    }
+    
+    @objc
+    func handleSelectDate() {
+        selectDate.accept(datePicker.date)
+        dateTextField.endEditing(true)
     }
     
 }

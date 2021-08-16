@@ -9,6 +9,7 @@ import Foundation
 
 struct User {
     var email: String
-    var name: String?
-    var transactions: [Transaction]?
+    var name: String
+    var transactions: [Transaction]
+    var totalAmount: Int
 }
