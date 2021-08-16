@@ -36,7 +36,7 @@
                                                 </constraints>
                                             </imageView>
                                         </subviews>
-                                        <color key="backgroundColor" name="mainBG"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstItem="T0A-8T-13X" firstAttribute="top" secondItem="AXg-Xf-GCa" secondAttribute="top" id="El9-Ta-EN7"/>
                                             <constraint firstAttribute="height" constant="50" id="NNI-J0-a7u"/>
@@ -54,7 +54,7 @@
                                                 <real key="value" value="1"/>
                                             </userDefinedRuntimeAttribute>
                                             <userDefinedRuntimeAttribute type="color" keyPath="borderColor">
-                                                <color key="value" name="main"/>
+                                                <color key="value" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </userDefinedRuntimeAttribute>
                                         </userDefinedRuntimeAttributes>
                                     </view>
@@ -73,6 +73,7 @@
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="akK-Ec-9zO">
                                         <rect key="frame" x="0.0" y="120" width="335" height="50"/>
+                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
                                         <state key="normal" title="Register">
                                             <color key="titleColor" name="main"/>
@@ -87,6 +88,7 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="akK-Ec-9zO" secondAttribute="trailing" id="AGx-Zo-ySK"/>
                                     <constraint firstAttribute="trailing" secondItem="AXg-Xf-GCa" secondAttribute="trailing" id="Wzn-0j-FBU"/>
+                                    <constraint firstAttribute="height" constant="170" id="ZgZ-Qu-jhT"/>
                                     <constraint firstAttribute="trailing" secondItem="wcl-sS-dLc" secondAttribute="trailing" id="axb-fD-gFi"/>
                                     <constraint firstItem="akK-Ec-9zO" firstAttribute="leading" secondItem="g5R-ie-S9E" secondAttribute="leading" id="esr-wK-z0m"/>
                                     <constraint firstItem="wcl-sS-dLc" firstAttribute="leading" secondItem="g5R-ie-S9E" secondAttribute="leading" id="jcJ-9C-YF7"/>
@@ -105,6 +107,7 @@
                     </view>
                     <connections>
                         <outlet property="emailTextField" destination="T0A-8T-13X" id="qTg-vB-0TX"/>
+                        <outlet property="emailView" destination="AXg-Xf-GCa" id="ogs-sO-x1b"/>
                         <outlet property="loginButton" destination="wcl-sS-dLc" id="abe-vf-R6S"/>
                         <outlet property="registerButton" destination="akK-Ec-9zO" id="UwZ-PC-oT0"/>
                     </connections>

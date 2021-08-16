@@ -11,6 +11,7 @@ final class LoginViewController: BaseViewController {
     
     var presenter: LoginPresenter!
     
+    @IBOutlet private weak var emailView: UIView!
     @IBOutlet private weak var emailTextField: UITextField!
     @IBOutlet private weak var loginButton: UIButton!
     @IBOutlet private weak var registerButton: UIButton!
@@ -26,6 +27,8 @@ final class LoginViewController: BaseViewController {
 
     override func setupUI() {
         super.setupUI()
+        
+        emailTextField.delegate = self
     }    
 
     override func bindDatas() {
@@ -47,5 +50,15 @@ extension Reactive where Base: LoginViewController {
         Binder(base) { vc, _ in
             vc.presenter.toRegister()
         }
+    }
+}
+
+extension LoginViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        emailView.layer.borderColor = Asset.Colors.main.color.cgColor
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        emailView.layer.borderColor = UIColor.clear.cgColor
     }
 }
