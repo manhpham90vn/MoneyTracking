@@ -31,18 +31,22 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
             trigger
                 .withUnretained(self)
                 .flatMapLatest { vc, obj -> Observable<Void> in
-                    return vc.interactor.addNewTransaction(transaction: obj)
-                        .asObservable()
-                        .flatMap { result -> Observable<Void> in
-                            if result {
-                                return vc.view.showAlert(title: "Success", message: "")
-                                    .do(onNext: {
-                                        vc.router.back()
-                                    })
-                            } else {
-                                return vc.view.showAlert(title: "Error", message: "")
+                    if obj.isValid() {
+                        return vc.interactor.addNewTransaction(transaction: obj)
+                            .asObservable()
+                            .flatMap { result -> Observable<Void> in
+                                if result {
+                                    return vc.view.showAlert(title: "Success", message: "Add transaction success")
+                                        .do(onNext: {
+                                            vc.router.back()
+                                        })
+                                } else {
+                                    return vc.view.showAlert(title: "Error", message: "Add transaction failed")
+                                }
                             }
-                        }
+                    } else {
+                        return vc.view.showAlert(title: "Error", message: "Please input amount and content")
+                    }
                 }
                 .subscribe()
         ]
@@ -54,4 +58,10 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         LeakDetector.instance.expectDeallocate(object: interactor as AnyObject)
     }
 
+}
+
+extension Transaction {
+    fileprivate func isValid() -> Bool {
+        return amount > 0 && !content.isEmpty
+    }
 }

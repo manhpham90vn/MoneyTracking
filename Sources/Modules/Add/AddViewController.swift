@@ -90,7 +90,7 @@ final class AddViewController: BaseViewController {
                                        amount: Int(self.amountTextField.text ?? "0") ?? 0,
                                        currency: self.selectCurrency.value,
                                        type: self.selectTransactionType.value,
-                                       content: self.contentTextField.text,
+                                       content: self.contentTextField.text ?? "",
                                        date: self.selectDate.value)
                 }
                 .unwrap()

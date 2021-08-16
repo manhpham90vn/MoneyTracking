@@ -12,6 +12,6 @@ struct Transaction {
     var amount: Int
     var currency: Currency
     var type: TransactionType
-    var content: String?
+    var content: String
     var date: Date
 }

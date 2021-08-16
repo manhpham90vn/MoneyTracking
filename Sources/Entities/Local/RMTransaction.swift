@@ -13,7 +13,7 @@ final class RMTransaction: Object {
     @Persisted var amount: Int
     @Persisted var currency: Currency
     @Persisted var type: TransactionType
-    @Persisted var content: String?
+    @Persisted var content: String
     @Persisted var date: Date
 }
 
