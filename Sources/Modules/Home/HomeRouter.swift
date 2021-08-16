@@ -9,6 +9,7 @@ import UIKit
 
 protocol HomeRouterInterface {
     func toAdd()
+    func toLogOut()
 }
 
 final class HomeRouter: HomeRouterInterface, Router {
@@ -29,6 +30,11 @@ final class HomeRouter: HomeRouterInterface, Router {
     func toAdd() {
         let vc = AppScenes.add.viewController
         viewController.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func toLogOut() {
+        let vc = AppScenes.login.viewController
+        UIWindow.shared?.rootViewController = BaseNavigationController(rootViewController: vc)
     }
 
 }

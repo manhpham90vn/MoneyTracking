@@ -38,7 +38,7 @@ final class ApiProvider<Target: TargetType>: MoyaProvider<Target>, HasDisposeBag
                 guard let target = (target as? MultiTarget)?.target as? ApiRouter else { return }
                 guard target.needShowDialogWhenBadStatuCode else { return }
                 if ErrorCode(rawValue: response.statusCode)?.isError ?? false {
-                    AppHelper.shared.showAlert(title: "Đã Xảy ra lỗi", message: "Lỗi không xác định").subscribe() ~ disposeBag
+                    AppHelper.shared.showAlert(title: "An error occurred", message: "Unknown error").subscribe() ~ disposeBag
                 }
             default:
                 break
@@ -57,7 +57,9 @@ final class ApiProvider<Target: TargetType>: MoyaProvider<Target>, HasDisposeBag
                     case .sessionTaskFailed:
                         return AppHelper
                             .shared
-                            .showAlertConfirm(title: "Không thể kết nối tới máy chủ", message: "Vui lòng kiểm tra kết nối và thử lại", ok: "Tải Lại")
+                            .showAlertConfirm(title: "Cannot connect to server",
+                                              message: "Please check the connection and try again",
+                                              ok: "Reload")
                             .flatMap { [weak self] in
                                 self?.request(target: target) ?? .empty()
                             }

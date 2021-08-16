@@ -7,6 +7,7 @@
 
 protocol HomeInteractorInterface {
     func getAllItem() -> Single<[Transaction]>
+    func logOut()
 }
 
 final class HomeInteractor: HomeInteractorInterface {
@@ -25,6 +26,10 @@ final class HomeInteractor: HomeInteractorInterface {
             }
         }
         return .just([])
+    }
+    
+    func logOut() {
+        auth.logOut()
     }
 
 }

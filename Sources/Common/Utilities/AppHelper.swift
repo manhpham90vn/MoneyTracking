@@ -15,7 +15,7 @@ final class AppHelper {
     
     @Atomic var isShowAlert = false
     
-    func showAlert(title: String, message: String, ok: String = "Chấp Nhận") -> Observable<Void> {
+    func showAlert(title: String, message: String, ok: String = "OK") -> Observable<Void> {
         guard !isShowAlert else { return .empty() }
         return Observable<Void>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }
@@ -33,7 +33,7 @@ final class AppHelper {
         }
     }
     
-    func showAlertConfirm(title: String, message: String, cancel: String = "Huỷ", ok: String = "Chấp Nhận") -> Observable<Void> {
+    func showAlertConfirm(title: String, message: String, cancel: String = "Cancel", ok: String = "OK") -> Observable<Void> {
         guard !isShowAlert else { return .empty() }
         return Observable<Void>.create { [weak self] observer in
             guard let self = self else { return Disposables.create() }

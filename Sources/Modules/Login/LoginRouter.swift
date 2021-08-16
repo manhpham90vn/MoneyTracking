@@ -34,7 +34,7 @@ final class LoginRouter: LoginRouterInterface, Router {
     
     func toHome() {
         let vc = AppScenes.home.viewController
-        UIWindow.shared?.rootViewController = UINavigationController(rootViewController: vc)
+        UIWindow.shared?.rootViewController = BaseNavigationController(rootViewController: vc)
     }
 
 }

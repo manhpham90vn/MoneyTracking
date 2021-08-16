@@ -11,6 +11,7 @@ protocol HomePresenterInterface: Presenter {
     var interactor: HomeInteractorInterface { get }
     
     func handleAdd()
+    func handleLogOut()
 }
 
 final class HomePresenter: HomePresenterInterface, PresenterPageable {
@@ -53,6 +54,11 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
     
     func handleAdd() {
         router.toAdd()
+    }
+    
+    func handleLogOut() {
+        interactor.logOut()
+        router.toLogOut()
     }
 
 }

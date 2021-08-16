@@ -25,7 +25,11 @@ final class HomeViewController: BaseTableViewViewController {
         super.setupUI()
         
         let addBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
-        navigationItem.rightBarButtonItem = addBtn
+        navigationItem.leftBarButtonItem = addBtn
+        
+        let logOutBtn = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
+        navigationItem.rightBarButtonItem = logOutBtn
+        
         tableView.register(cellType: HomeTableViewCell.self)
     }    
 
@@ -48,6 +52,11 @@ final class HomeViewController: BaseTableViewViewController {
                 cell.config(transaction: element)
             }
         ]
+    }
+    
+    @objc
+    func handleLogOut() {
+        presenter.handleLogOut()
     }
     
     @objc

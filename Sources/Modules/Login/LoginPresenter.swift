@@ -39,17 +39,17 @@ final class LoginPresenter: LoginPresenterInterface, HasActivityIndicator, HasDi
                             .flatMap { result -> Observable<Void> in
                                 if result {
                                     return vc.view
-                                        .showAlert(title: "OK", message: "Đăng Nhập Thành Công")
+                                        .showAlert(title: "OK", message: "Login Success")
                                         .do(onNext: {
                                             vc.interactor.saveUser(email: obj)
                                             vc.router.toHome()
                                         })
                                 } else {
-                                    return vc.view.showAlert(title: "OK", message: "Đăng nhập thất bại")
+                                    return vc.view.showAlert(title: "OK", message: "Login failed")
                                 }
                             }
                     } else {
-                        return vc.view.showAlert(title: "ERROR", message: "sai dinh dang")
+                        return vc.view.showAlert(title: "Error", message: "Email invalidate")
                     }
                 }
                 .subscribe()

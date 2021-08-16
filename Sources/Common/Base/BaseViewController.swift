@@ -19,6 +19,12 @@ class BaseViewController: UIViewController, HasDisposeBag { // swiftlint:disable
         bindDatas()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationItem.backBarButtonItem = BackBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+    }
+    
     func setupUI() {
 
     }
@@ -27,4 +33,17 @@ class BaseViewController: UIViewController, HasDisposeBag { // swiftlint:disable
         isLoading ~> PKHUD.rx.isAnimating ~ disposeBag
     }
 
+}
+
+final class BackBarButtonItem: UIBarButtonItem {
+    @available(iOS 14.0, *)
+    override var menu: UIMenu? {
+        get {
+            return nil
+        }
+        set {
+            super.menu = nil
+        }
+        
+    }
 }
