@@ -8,6 +8,7 @@
 protocol HomeInteractorInterface {
     func getAllItem() -> Single<[Transaction]>
     func logOut()
+    func removeTransaction(id: String) -> Single<Bool>
 }
 
 final class HomeInteractor: HomeInteractorInterface {
@@ -30,6 +31,10 @@ final class HomeInteractor: HomeInteractorInterface {
     
     func logOut() {
         auth.logOut()
+    }
+    
+    func removeTransaction(id: String) -> Single<Bool> {
+        database.deleteTransaction(transactionId: id)
     }
 
 }

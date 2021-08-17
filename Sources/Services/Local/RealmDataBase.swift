@@ -85,8 +85,12 @@ final class RealmDataBase: RealmDataBaseInterface {
         Single<Bool>.create { [weak self] single in
             if let transactionToUpdate = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id) {
                 try? self?.realm?.write {
+                    transactionToUpdate.currency = transaction.currency
+                    transactionToUpdate.type = transaction.type
                     transactionToUpdate.amount = transaction.amount
                     transactionToUpdate.content = transaction.content
+                    transactionToUpdate.date = transaction.date
+                    self?.realm?.add(transactionToUpdate, update: .modified)
                     single(.success(true))
                 }
             } else {

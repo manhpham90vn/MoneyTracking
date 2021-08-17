@@ -31,6 +31,7 @@ final class HomeViewController: BaseTableViewViewController {
         navigationItem.rightBarButtonItem = logOutBtn
         
         tableView.register(cellType: HomeTableViewCell.self)
+        tableView.rx.setDelegate(self) ~ disposeBag
     }    
 
     override func bindDatas() {
@@ -47,7 +48,9 @@ final class HomeViewController: BaseTableViewViewController {
             presenter.elements.bind(to: tableView.rx.items(cellIdentifier: HomeTableViewCell.reuseIdentifier,
                                                            cellType: HomeTableViewCell.self)) { _, element, cell in
                 cell.config(transaction: element)
-            }
+            },
+            
+            tableView.rx.modelSelected(Transaction.self) ~> presenter.triggerSelect
         ]
     }
     
@@ -68,3 +71,16 @@ final class HomeViewController: BaseTableViewViewController {
 }
 
 extension HomeViewController: HomeViewInterface {}
+
+extension HomeViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, handle in
+            guard let id = self?.presenter.elements.value[indexPath.row].id else { return }
+            self?.presenter.triggerRemoveAt.accept(id)
+            handle(true)
+        }
+        let config = UISwipeActionsConfiguration(actions: [action])
+        config.performsFirstActionWithFullSwipe = false
+        return config
+    }
+}

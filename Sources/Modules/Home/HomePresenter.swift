@@ -31,6 +31,9 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
     let footerActivityIndicator = ActivityIndicator()
     var currentPage: Int = 1
 
+    let triggerRemoveAt = PublishRelay<String>()
+    let triggerSelect = PublishRelay<Transaction>()
+    
     init(view: HomeViewInterface,
          router: HomeRouterInterface,
          interactor: HomeInteractorInterface) {
@@ -42,7 +45,29 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
             trigger
                 .withUnretained(self)
                 .flatMapLatest { $0.0.interactor.getAllItem().trackActivity($0.0.headerActivityIndicator) }
-            ~> elements
+            ~> elements,
+            
+            triggerRemoveAt
+                .withUnretained(self)
+                .flatMapLatest { this, id -> Observable<Void> in
+                    return this.interactor.removeTransaction(id: id)
+                        .asObservable()
+                        .flatMap { result -> Observable<Void> in
+                            if result {
+                                this.trigger.accept(())
+                                return .just(())
+                            } else {
+                                return this.view.showAlert(title: "Error", message: "Can not delete transaction")
+                            }
+                        }
+                }
+                .subscribe(),
+            
+            triggerSelect
+                .withUnretained(self)
+                .subscribe(onNext: { this, transaction in
+                    this.router.toUpdate(transaction: transaction)
+                })
         ]
     }
 

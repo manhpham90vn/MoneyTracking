@@ -7,7 +7,7 @@
 
 enum AppScenes {
     case home
-    case add
+    case add(mode: AddEditMode)
     case login
     case register
     
@@ -16,23 +16,24 @@ enum AppScenes {
         case .home:
             let vc = StoryboardScene.HomeViewController.initialScene.instantiate()
             vc.title = "Home"
-            let vcInjected = HomeRouter(viewController: vc)
-            return vcInjected.viewController
-        case .add:
+            let vcInjected = HomeRouter(viewController: vc).viewController
+            return vcInjected
+        case let .add(mode):
             let vc = StoryboardScene.AddViewController.initialScene.instantiate()
-            vc.title = "Add Transaction"
-            let vcInjected = AddRouter(viewController: vc)
-            return vcInjected.viewController
+            let vcInjected = AddRouter(viewController: vc).viewController
+            vcInjected.title = mode.title
+            vcInjected.presenter.mode = mode
+            return vcInjected
         case .login:
             let vc = StoryboardScene.LoginViewController.initialScene.instantiate()
             vc.title = "Login"
-            let vcInjected = LoginRouter(viewController: vc)
-            return vcInjected.viewController
+            let vcInjected = LoginRouter(viewController: vc).viewController
+            return vcInjected
         case .register:
             let vc = StoryboardScene.RegisterViewController.initialScene.instantiate()
             vc.title = "Register"
-            let vcInjected = RegisterRouter(viewController: vc)
-            return vcInjected.viewController
+            let vcInjected = RegisterRouter(viewController: vc).viewController
+            return vcInjected
         }
     }
 }

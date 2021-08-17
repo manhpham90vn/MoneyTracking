@@ -11,6 +11,20 @@ protocol AddPresenterInterface: Presenter {
     var interactor: AddInteractorInterface { get }
 }
 
+enum AddEditMode {
+    case add
+    case edit(transaction: Transaction)
+    
+    var title: String {
+        switch self {
+        case .add:
+            return "Add Transaction"
+        case .edit:
+            return "Update Transaction"
+        }
+    }
+}
+
 final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDisposeBag {
 
     unowned let view: AddViewInterface
@@ -19,7 +33,44 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
 
     let activityIndicator = ActivityIndicator()
     let trigger = PublishRelay<Transaction>()
+    
+    var mode: AddEditMode!
+    var initCurrentcy: Currency {
+        switch mode {
+        case let .edit(transaction):
+            return transaction.currency
+        default:
+            return .japanse
+        }
+    }
+    
+    var initTransactionType: TransactionType {
+        switch mode {
+        case let .edit(transaction):
+            return transaction.type
+        default:
+            return .deposits
+        }
+    }
+    
+    var initDate: Date {
+        switch mode {
+        case let .edit(transaction):
+            return transaction.date
+        default:
+            return Date()
+        }
+    }
 
+    var uuidString: String {
+        switch mode {
+        case let .edit(transaction):
+            return transaction.id
+        default:
+            return UUID().uuidString
+        }
+    }
+    
     init(view: AddViewInterface,
          router: AddRouterInterface,
          interactor: AddInteractorInterface) {
@@ -32,18 +83,14 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
                 .withUnretained(self)
                 .flatMapLatest { this, obj -> Observable<Void> in
                     if obj.isValid() {
-                        return this.interactor.addNewTransaction(transaction: obj)
-                            .asObservable()
-                            .flatMap { result -> Observable<Void> in
-                                if result {
-                                    return this.view.showAlert(title: "Success", message: "Add transaction success")
-                                        .do(onNext: {
-                                            this.router.back()
-                                        })
-                                } else {
-                                    return this.view.showAlert(title: "Error", message: "Add transaction failed")
-                                }
-                            }
+                        switch this.mode {
+                        case .add:
+                            return this.handleAddTransaction(this: this, obj: obj)
+                        case .edit:
+                            return this.handleUpdateTransaction(this: this, obj: obj)
+                        default:
+                            return .empty()
+                        }
                     } else {
                         return this.view.showAlert(title: "Error", message: "Please input amount and content")
                     }
@@ -56,6 +103,36 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         LogInfo("\(type(of: self)) Deinit")
         LeakDetector.instance.expectDeallocate(object: router as AnyObject)
         LeakDetector.instance.expectDeallocate(object: interactor as AnyObject)
+    }
+    
+    func handleAddTransaction(this: AddPresenter, obj: Transaction) -> Observable<Void> {
+        return this.interactor.addNewTransaction(transaction: obj)
+            .asObservable()
+            .flatMap { result -> Observable<Void> in
+                if result {
+                    return this.view.showAlert(title: "Success", message: "Add transaction success")
+                        .do(onNext: {
+                            this.router.back()
+                        })
+                } else {
+                    return this.view.showAlert(title: "Error", message: "Add transaction failed")
+                }
+            }
+    }
+    
+    func handleUpdateTransaction(this: AddPresenter, obj: Transaction) -> Observable<Void> {
+        return this.interactor.updateTransaction(transaction: obj)
+            .asObservable()
+            .flatMap { result -> Observable<Void> in
+                if result {
+                    return this.view.showAlert(title: "Success", message: "Update transaction success")
+                        .do(onNext: {
+                            this.router.back()
+                        })
+                } else {
+                    return this.view.showAlert(title: "Error", message: "Update transaction failed")
+                }
+            }
     }
 
 }

@@ -7,6 +7,7 @@
 
 protocol AddInteractorInterface {
     func addNewTransaction(transaction: Transaction) -> Single<Bool>
+    func updateTransaction(transaction: Transaction) -> Single<Bool>
 }
 
 final class AddInteractor: AddInteractorInterface {
@@ -24,6 +25,10 @@ final class AddInteractor: AddInteractorInterface {
         } else {
             return .just(false)
         }
+    }
+    
+    func updateTransaction(transaction: Transaction) -> Single<Bool> {
+        database.updateTransaction(transaction: transaction.asRealm())
     }
 
 }

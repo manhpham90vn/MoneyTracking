@@ -17,9 +17,9 @@ final class AddViewController: BaseViewController {
         }
     }
     
-    private let selectCurrency = BehaviorRelay<Currency>(value: .japanse)
-    private let selectTransactionType = BehaviorRelay<TransactionType>(value: .deposits)
-    private let selectDate = BehaviorRelay<Date>(value: Date())
+    private lazy var selectCurrency = BehaviorRelay<Currency>(value: presenter.initCurrentcy)
+    private lazy var selectTransactionType = BehaviorRelay<TransactionType>(value: presenter.initTransactionType)
+    private lazy var selectDate = BehaviorRelay<Date>(value: presenter.initDate)
     
     @IBOutlet private weak var amountTextField: UITextField!
     @IBOutlet private weak var contentTextField: UITextField!
@@ -73,6 +73,12 @@ final class AddViewController: BaseViewController {
         transactionTypeStackViewHeightCT.constant = CGFloat(TransactionType.allCases.count * 25)
         dateTextField.inputView = datePicker
         dateTextField.addDoneOnKeyboardWithTarget(self, action: #selector(handleSelectDate))
+        addButton.setTitle(presenter.mode.title, for: .normal)
+        
+        if case let .edit(transaction) = presenter.mode {
+            amountTextField.text = String(transaction.amount)
+            contentTextField.text = transaction.content
+        }
     }    
 
     override func bindDatas() {
@@ -84,7 +90,7 @@ final class AddViewController: BaseViewController {
             addButton.rx.tap
                 .withUnretained(self)
                 .map { this, _ -> Transaction in
-                    return Transaction(id: UUID().uuidString,
+                    return Transaction(id: this.presenter.uuidString,
                                        amount: Int(this.amountTextField.text ?? "0") ?? 0,
                                        currency: this.selectCurrency.value,
                                        type: this.selectTransactionType.value,
