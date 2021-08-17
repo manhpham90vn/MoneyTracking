@@ -37,7 +37,7 @@ final class LoginViewController: BaseViewController {
         presenter.bind(isLoading: isLoading)
         disposeBag ~ [
             registerButton.rx.tap ~> rx.didTapRegister,
-            loginButton.rx.tap.map { [weak self] in self?.emailTextField.text ?? "" } ~> presenter.trigger
+            loginButton.rx.tap.withUnretained(self).map { this, _ in this.emailTextField.text ?? "" } ~> presenter.trigger
         ]
     }
     

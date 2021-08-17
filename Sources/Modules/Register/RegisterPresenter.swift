@@ -30,24 +30,24 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { vc, obj -> Observable<Void> in
+                .flatMapLatest { this, obj -> Observable<Void> in
                     if obj.isValid() {
-                        return vc.interactor.createUser(user: obj)
+                        return this.interactor.createUser(user: obj)
                             .asObservable()
                             .flatMap { result -> Observable<Void> in
                                 if result {
-                                    return vc.view
+                                    return this.view
                                         .showAlert(title: "Success", message: "Create user success")
                                         .do(onNext: {
-                                            vc.router.back()
+                                            this.router.back()
                                         })
                                 } else {
-                                    return vc.view
+                                    return this.view
                                         .showAlert(title: "Error", message: "User Exits")
                                 }
                             }
                     } else {
-                        return vc.view
+                        return this.view
                             .showAlert(title: "Error", message: "Please check email and name")
                     }
                 }

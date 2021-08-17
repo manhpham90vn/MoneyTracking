@@ -32,24 +32,24 @@ final class LoginPresenter: LoginPresenterInterface, HasActivityIndicator, HasDi
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { vc, obj -> Observable<Void> in
+                .flatMapLatest { this, obj -> Observable<Void> in
                     if obj.isValidEmail() {
-                        return vc.interactor.login(email: obj)
+                        return this.interactor.login(email: obj)
                             .asObservable()
                             .flatMap { result -> Observable<Void> in
                                 if result {
-                                    return vc.view
+                                    return this.view
                                         .showAlert(title: "OK", message: "Login Success")
                                         .do(onNext: {
-                                            vc.interactor.saveUser(email: obj)
-                                            vc.router.toHome()
+                                            this.interactor.saveUser(email: obj)
+                                            this.router.toHome()
                                         })
                                 } else {
-                                    return vc.view.showAlert(title: "OK", message: "Login failed")
+                                    return this.view.showAlert(title: "OK", message: "Login failed")
                                 }
                             }
                     } else {
-                        return vc.view.showAlert(title: "Error", message: "Email invalidate")
+                        return this.view.showAlert(title: "Error", message: "Email invalidate")
                     }
                 }
                 .subscribe()

@@ -84,16 +84,15 @@ final class AddViewController: BaseViewController {
             addButton
                 .rx
                 .tap
-                .map { [weak self] _ -> Transaction? in
-                    guard let self = self else { return nil }
+                .withUnretained(self)
+                .map { this, _ -> Transaction in
                     return Transaction(id: UUID().uuidString,
-                                       amount: Int(self.amountTextField.text ?? "0") ?? 0,
-                                       currency: self.selectCurrency.value,
-                                       type: self.selectTransactionType.value,
-                                       content: self.contentTextField.text ?? "",
-                                       date: self.selectDate.value)
+                                       amount: Int(this.amountTextField.text ?? "0") ?? 0,
+                                       currency: this.selectCurrency.value,
+                                       type: this.selectTransactionType.value,
+                                       content: this.contentTextField.text ?? "",
+                                       date: this.selectDate.value)
                 }
-                .unwrap()
             ~> presenter.trigger,
             selectDate.map(mapDateToString) ~> dateTextField.rx.text
         ]

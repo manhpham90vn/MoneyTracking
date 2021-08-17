@@ -30,22 +30,22 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { vc, obj -> Observable<Void> in
+                .flatMapLatest { this, obj -> Observable<Void> in
                     if obj.isValid() {
-                        return vc.interactor.addNewTransaction(transaction: obj)
+                        return this.interactor.addNewTransaction(transaction: obj)
                             .asObservable()
                             .flatMap { result -> Observable<Void> in
                                 if result {
-                                    return vc.view.showAlert(title: "Success", message: "Add transaction success")
+                                    return this.view.showAlert(title: "Success", message: "Add transaction success")
                                         .do(onNext: {
-                                            vc.router.back()
+                                            this.router.back()
                                         })
                                 } else {
-                                    return vc.view.showAlert(title: "Error", message: "Add transaction failed")
+                                    return this.view.showAlert(title: "Error", message: "Add transaction failed")
                                 }
                             }
                     } else {
-                        return vc.view.showAlert(title: "Error", message: "Please input amount and content")
+                        return this.view.showAlert(title: "Error", message: "Please input amount and content")
                     }
                 }
                 .subscribe()
