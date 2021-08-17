@@ -44,9 +44,6 @@ final class HomeViewController: BaseTableViewViewController {
                              headerRefreshTrigger.asObservable())
                 ~> presenter.trigger,
             
-            rx.viewWillAppear.mapTo(())
-                ~> presenter.trigger,
-            
             presenter.elements.bind(to: tableView.rx.items(cellIdentifier: HomeTableViewCell.reuseIdentifier,
                                                            cellType: HomeTableViewCell.self)) { _, element, cell in
                 cell.config(transaction: element)

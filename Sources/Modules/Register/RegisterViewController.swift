@@ -38,9 +38,7 @@ final class RegisterViewController: BaseViewController {
         
         presenter.bind(isLoading: isLoading)
         disposeBag ~ [
-            registerButton
-                .rx
-                .tap
+            registerButton.rx.tap
                 .withUnretained(self)
                 .map { this, _ -> User in
                     return User(email: this.emailTextField.text ?? "",

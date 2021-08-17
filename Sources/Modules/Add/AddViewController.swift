@@ -81,9 +81,7 @@ final class AddViewController: BaseViewController {
         presenter.bind(isLoading: isLoading)
         
         disposeBag ~ [
-            addButton
-                .rx
-                .tap
+            addButton.rx.tap
                 .withUnretained(self)
                 .map { this, _ -> Transaction in
                     return Transaction(id: UUID().uuidString,

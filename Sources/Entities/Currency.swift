@@ -35,4 +35,15 @@ enum Currency: Int, PersistableEnum {
             return "₫"
         }
     }
+    
+    var locate: Locale {
+        switch self {
+        case .japanse:
+            return .init(identifier: "ja_JP")
+        case .thai:
+            return .init(identifier: "th_TH")
+        case .vnd:
+            return .init(identifier: "vi_VN")
+        }
+    }
 }

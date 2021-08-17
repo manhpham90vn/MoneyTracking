@@ -21,4 +21,13 @@ enum TransactionType: Int, PersistableEnum {
             return "Withdrawal"
         }
     }
+    
+    var `operator`: String {
+        switch self {
+        case .deposits:
+            return "+"
+        case .withdrawal:
+            return "-"
+        }
+    }
 }
