@@ -85,9 +85,9 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
                     if obj.isValid() {
                         switch this.mode {
                         case .add:
-                            return this.handleAddTransaction(this: this, obj: obj)
+                            return this.handleAddTransaction(obj: obj)
                         case .edit:
-                            return this.handleUpdateTransaction(this: this, obj: obj)
+                            return this.handleUpdateTransaction(obj: obj)
                         default:
                             return .empty()
                         }
@@ -105,32 +105,38 @@ final class AddPresenter: AddPresenterInterface, HasActivityIndicator, HasDispos
         LeakDetector.instance.expectDeallocate(object: interactor as AnyObject)
     }
     
-    func handleAddTransaction(this: AddPresenter, obj: Transaction) -> Observable<Void> {
-        return this.interactor.addNewTransaction(transaction: obj)
+    func handleAddTransaction(obj: Transaction) -> Observable<Void> {
+        return interactor.addNewTransaction(transaction: obj)
             .asObservable()
-            .flatMap { result -> Observable<Void> in
+            .withUnretained(self)
+            .flatMap { this, result -> Observable<Void> in
                 if result {
-                    return this.view.showAlert(title: "Success", message: "Add transaction success")
-                        .do(onNext: {
-                            this.router.back()
+                    return this.view
+                        .showAlert(title: "Success", message: "Add transaction success")
+                        .do(onNext: { [weak this] in
+                            this?.router.back()
                         })
                 } else {
-                    return this.view.showAlert(title: "Error", message: "Add transaction failed")
+                    return this.view
+                        .showAlert(title: "Error", message: "Add transaction failed")
                 }
             }
     }
     
-    func handleUpdateTransaction(this: AddPresenter, obj: Transaction) -> Observable<Void> {
-        return this.interactor.updateTransaction(transaction: obj)
+    func handleUpdateTransaction(obj: Transaction) -> Observable<Void> {
+        return interactor.updateTransaction(transaction: obj)
             .asObservable()
-            .flatMap { result -> Observable<Void> in
+            .withUnretained(self)
+            .flatMap { this, result -> Observable<Void> in
                 if result {
-                    return this.view.showAlert(title: "Success", message: "Update transaction success")
-                        .do(onNext: {
-                            this.router.back()
+                    return this.view
+                        .showAlert(title: "Success", message: "Update transaction success")
+                        .do(onNext: { [weak this] in
+                            this?.router.back()
                         })
                 } else {
-                    return this.view.showAlert(title: "Error", message: "Update transaction failed")
+                    return this.view
+                        .showAlert(title: "Error", message: "Update transaction failed")
                 }
             }
     }

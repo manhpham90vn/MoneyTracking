@@ -98,7 +98,7 @@ final class AddViewController: BaseViewController {
                                        date: this.selectDate.value)
                 }
             ~> presenter.trigger,
-            selectDate.map(mapDateToString) ~> dateTextField.rx.text
+            selectDate.map { [weak self] in self?.mapDateToString(date: $0) } ~> dateTextField.rx.text
         ]
     }
     
