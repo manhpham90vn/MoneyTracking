@@ -65,6 +65,6 @@ final class RegisterPresenter: RegisterPresenterInterface, HasActivityIndicator,
 
 extension User {
     fileprivate func isValid() -> Bool {
-        return email.isValidEmail()
+        return email.isValidEmail() && !name.isEmpty
     }
 }

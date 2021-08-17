@@ -11,12 +11,13 @@ import MJRefresh
 final class HomeViewController: BaseTableViewViewController {
     
     var presenter: HomePresenter!
+    var header: HomeHeader!
 
     deinit {
         LogInfo("\(type(of: self)) Deinit")
         LeakDetector.instance.expectDeallocate(object: presenter as AnyObject)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -32,6 +33,11 @@ final class HomeViewController: BaseTableViewViewController {
         
         tableView.register(cellType: HomeTableViewCell.self)
         tableView.rx.setDelegate(self) ~ disposeBag
+        
+        header = HomeHeader()
+        header.frame = .init(x: 0, y: 0, width: tableView.frame.width, height: 100)
+        header.loadNibContent()
+        tableView.tableHeaderView = header
     }    
 
     override func bindDatas() {
@@ -50,7 +56,9 @@ final class HomeViewController: BaseTableViewViewController {
                 cell.config(transaction: element)
             },
             
-            tableView.rx.modelSelected(Transaction.self) ~> presenter.triggerSelect
+            tableView.rx.modelSelected(Transaction.self) ~> presenter.triggerSelect,
+            
+            presenter.userInfo.unwrap() ~> rx.userInfo
         ]
     }
     
@@ -75,12 +83,20 @@ extension HomeViewController: HomeViewInterface {}
 extension HomeViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         let action = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, handle in
-            guard let id = self?.presenter.elements.value[indexPath.row].id else { return }
-            self?.presenter.triggerRemoveAt.accept(id)
+            guard let transaction = self?.presenter.elements.value[indexPath.row] else { return }
+            self?.presenter.triggerRemoveAt.accept(transaction)
             handle(true)
         }
         let config = UISwipeActionsConfiguration(actions: [action])
         config.performsFirstActionWithFullSwipe = false
         return config
+    }
+}
+
+extension Reactive where Base: HomeViewController {
+    var userInfo: Binder<User> {
+        Binder(base) { vc, user in
+            vc.header.config(user: user)
+        }
     }
 }

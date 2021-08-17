@@ -28,7 +28,11 @@ final class AddInteractor: AddInteractorInterface {
     }
     
     func updateTransaction(transaction: Transaction) -> Single<Bool> {
-        database.updateTransaction(transaction: transaction.asRealm())
+        if let user = auth.currentUser {
+            return database.updateTransaction(email: user, transaction: transaction.asRealm())
+        } else {
+            return .just(false)
+        }
     }
 
 }

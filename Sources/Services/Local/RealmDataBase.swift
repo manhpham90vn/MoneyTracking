@@ -10,11 +10,12 @@ import RealmSwift
 
 protocol RealmDataBaseInterface {
     func createUser(user: RMUser) -> Single<Bool>
+    func getUserInfo(email: String) -> Single<RMUser?>
     func login(email: String) -> Single<Bool>
     func allTransactions(email: String) -> Single<[RMTransaction]>
     func createTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
-    func updateTransaction(transaction: RMTransaction) -> Single<Bool>
-    func deleteTransaction(transactionId: String) -> Single<Bool>
+    func updateTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
+    func deleteTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
 }
 
 final class RealmDataBase: RealmDataBaseInterface {
@@ -34,6 +35,17 @@ final class RealmDataBase: RealmDataBaseInterface {
                     self?.realm?.add(user)
                     single(.success(true))
                 }
+            }
+            return Disposables.create()
+        }
+    }
+    
+    func getUserInfo(email: String) -> Single<RMUser?> {
+        Single<RMUser?>.create { [weak self] single in
+            if let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
+                single(.success(user))
+            } else {
+                single(.success(nil))
             }
             return Disposables.create()
         }
@@ -81,15 +93,29 @@ final class RealmDataBase: RealmDataBaseInterface {
         }
     }
     
-    func updateTransaction(transaction: RMTransaction) -> Single<Bool> {
+    func updateTransaction(email: String, transaction: RMTransaction) -> Single<Bool> {
         Single<Bool>.create { [weak self] single in
-            if let transactionToUpdate = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id) {
+            if let transactionToUpdate = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id),
+               let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
                 try? self?.realm?.write {
+                    switch transactionToUpdate.type {
+                    case .deposits:
+                        user.totalAmount -= transactionToUpdate.amount
+                    case .withdrawal:
+                        user.totalAmount += transactionToUpdate.amount
+                    }
+                    switch transaction.type {
+                    case .deposits:
+                        user.totalAmount += transaction.amount
+                    case .withdrawal:
+                        user.totalAmount -= transaction.amount
+                    }
                     transactionToUpdate.currency = transaction.currency
                     transactionToUpdate.type = transaction.type
                     transactionToUpdate.amount = transaction.amount
                     transactionToUpdate.content = transaction.content
                     transactionToUpdate.date = transaction.date
+                    self?.realm?.add(user, update: .modified)
                     self?.realm?.add(transactionToUpdate, update: .modified)
                     single(.success(true))
                 }
@@ -100,10 +126,18 @@ final class RealmDataBase: RealmDataBaseInterface {
         }
     }
     
-    func deleteTransaction(transactionId: String) -> Single<Bool> {
+    func deleteTransaction(email: String, transaction: RMTransaction) -> Single<Bool> {
         Single<Bool>.create { [weak self] single in
-            if let transaction = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transactionId) {
+            if let transaction = self?.realm?.object(ofType: RMTransaction.self, forPrimaryKey: transaction.id),
+               let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
                 try? self?.realm?.write {
+                    switch transaction.type {
+                    case .deposits:
+                        user.totalAmount -= transaction.amount
+                    case .withdrawal:
+                        user.totalAmount += transaction.amount
+                    }
+                    self?.realm?.add(user, update: .modified)
                     self?.realm?.delete(transaction)
                     single(.success(true))
                 }

@@ -31,8 +31,9 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
     let footerActivityIndicator = ActivityIndicator()
     var currentPage: Int = 1
 
-    let triggerRemoveAt = PublishRelay<String>()
+    let triggerRemoveAt = PublishRelay<Transaction>()
     let triggerSelect = PublishRelay<Transaction>()
+    let userInfo = BehaviorRelay<User?>(value: nil)
     
     init(view: HomeViewInterface,
          router: HomeRouterInterface,
@@ -49,8 +50,8 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
             
             triggerRemoveAt
                 .withUnretained(self)
-                .flatMapLatest { this, id -> Observable<Void> in
-                    return this.interactor.removeTransaction(id: id)
+                .flatMapLatest { this, obj -> Observable<Void> in
+                    return this.interactor.removeTransaction(transaction: obj)
                         .asObservable()
                         .flatMap { result -> Observable<Void> in
                             if result {
@@ -67,7 +68,14 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
                 .withUnretained(self)
                 .subscribe(onNext: { this, transaction in
                     this.router.toUpdate(transaction: transaction)
-                })
+                }),
+            
+            trigger
+                .withUnretained(self)
+                .flatMapLatest { this, _ -> Single<User?> in
+                    return this.interactor.getUserInfo()
+                }
+                ~> userInfo
         ]
     }
 

@@ -8,7 +8,8 @@
 protocol HomeInteractorInterface {
     func getAllItem() -> Single<[Transaction]>
     func logOut()
-    func removeTransaction(id: String) -> Single<Bool>
+    func removeTransaction(transaction: Transaction) -> Single<Bool>
+    func getUserInfo() -> Single<User?>
 }
 
 final class HomeInteractor: HomeInteractorInterface {
@@ -33,8 +34,18 @@ final class HomeInteractor: HomeInteractorInterface {
         auth.logOut()
     }
     
-    func removeTransaction(id: String) -> Single<Bool> {
-        database.deleteTransaction(transactionId: id)
+    func removeTransaction(transaction: Transaction) -> Single<Bool> {
+        if let user = auth.currentUser {
+            return database.deleteTransaction(email: user, transaction: transaction.asRealm())
+        }
+        return .just(false)
+    }
+    
+    func getUserInfo() -> Single<User?> {
+        if let user = auth.currentUser {
+            return database.getUserInfo(email: user).map { $0?.asDomain() }
+        }
+        return .just(nil)
     }
 
 }
