@@ -11,6 +11,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HomeHeader" customModule="My_App_Debug" customModuleProvider="target">
             <connections>
+                <outlet property="dateRange" destination="9pW-2D-5Lz" id="ZS2-zX-KGg"/>
                 <outlet property="emailLabel" destination="Zvz-vb-q1D" id="3tQ-np-fdn"/>
                 <outlet property="nameLabel" destination="53i-87-YNa" id="ESn-rj-Zvw"/>
                 <outlet property="totalAmountLabel" destination="IyQ-eI-akL" id="UIo-uk-pod"/>
@@ -36,12 +37,23 @@
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IyQ-eI-akL">
-                            <rect key="frame" x="204" y="98.5" width="41.5" height="17.5"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <nil key="textColor"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                        <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="M6k-N4-Gvi">
+                            <rect key="frame" x="178" y="98.5" width="93" height="17.5"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9pW-2D-5Lz">
+                                    <rect key="frame" x="0.0" y="0.0" width="41.5" height="17.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IyQ-eI-akL">
+                                    <rect key="frame" x="51.5" y="0.0" width="41.5" height="17.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
                     </subviews>
                     <edgeInsets key="layoutMargins" top="0.0" left="10" bottom="0.0" right="10"/>
                 </stackView>

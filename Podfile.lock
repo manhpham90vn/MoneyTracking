@@ -1,6 +1,7 @@
 PODS:
   - Alamofire (5.4.3)
   - Anchorage (4.5.0)
+  - DynamicBlurView (4.1.0)
   - Firebase/Analytics (8.3.0):
     - Firebase/Core
   - Firebase/Core (8.3.0):
@@ -103,6 +104,8 @@ PODS:
     - ObjcExceptionBridging/ObjcExceptionBridging (= 1.0.1)
   - ObjcExceptionBridging/ObjcExceptionBridging (1.0.1)
   - PKHUD (5.3.0)
+  - PopupDialog (1.1.1):
+    - DynamicBlurView (~> 4.0)
   - PromisesObjC (1.2.12)
   - Realm (10.10.0):
     - Realm/Headers (= 10.10.0)
@@ -153,6 +156,7 @@ DEPENDENCIES:
   - Moya/RxSwift (~> 14.0)
   - "NSObject+Rx"
   - PKHUD (~> 5.0)
+  - PopupDialog (~> 1.1)
   - RealmSwift
   - Resolver
   - Reusable
@@ -170,6 +174,7 @@ SPEC REPOS:
   trunk:
     - Alamofire
     - Anchorage
+    - DynamicBlurView
     - Firebase
     - FirebaseAnalytics
     - FirebaseCore
@@ -186,6 +191,7 @@ SPEC REPOS:
     - "NSObject+Rx"
     - ObjcExceptionBridging
     - PKHUD
+    - PopupDialog
     - PromisesObjC
     - Realm
     - RealmSwift
@@ -205,6 +211,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: e447a2774a40c996748296fa2c55112fdbbc42f9
   Anchorage: 1961bc81c84aeed54ad7ffc697c50cd9de748ba6
+  DynamicBlurView: 58e18fae80bb614e34681a4486870e7d257b62e8
   Firebase: 817b9171d0d51dccc458b94a5e8edff6b1dd323d
   FirebaseAnalytics: 456f2c51599870a15ded4548d1f1f7b2cabf65a7
   FirebaseCore: a6dba751680d7033b9d3831e1cfc95ead0605118
@@ -221,6 +228,7 @@ SPEC CHECKSUMS:
   "NSObject+Rx": fa6bbcc1ab1faa06b01466bc09b1e0692bbc5946
   ObjcExceptionBridging: c30e00eb3700467e695faeea30e26e18bd445001
   PKHUD: 98f3e4bc904b9c916f1c5bb6d765365b5357291b
+  PopupDialog: 720c92befd8bc23c13442254945213db5612f149
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
   Realm: f501df41a4222c67850c77cf135d472192ecf294
   RealmSwift: c69aadfc7db0d60075178d037c2f34ada73d5201
@@ -237,6 +245,6 @@ SPEC CHECKSUMS:
   Then: acfe0be7e98221c6204e12f8161459606d5d822d
   XCGLogger: 1943831ef907df55108b0b18657953f868de973b
 
-PODFILE CHECKSUM: 1839c9e7d21f80fa8ed2c487e57fb8b5d69d2c0d
+PODFILE CHECKSUM: 1dac220830b5c3c1a9ea2c3d30e958034826fe1c
 
 COCOAPODS: 1.10.1

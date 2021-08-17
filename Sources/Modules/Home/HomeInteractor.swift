@@ -6,7 +6,7 @@
 //
 
 protocol HomeInteractorInterface {
-    func getAllItem() -> Single<[Transaction]>
+    func getAllItem(date: Date?) -> Single<[Transaction]>
     func logOut()
     func removeTransaction(transaction: Transaction) -> Single<Bool>
     func getUserInfo() -> Single<User?>
@@ -21,9 +21,9 @@ final class HomeInteractor: HomeInteractorInterface {
         LogInfo("\(type(of: self)) Deinit")
     }
     
-    func getAllItem() -> Single<[Transaction]> {
+    func getAllItem(date: Date?) -> Single<[Transaction]> {
         if let user = auth.currentUser {
-            return database.allTransactions(email: user).map { obj -> [Transaction] in
+            return database.allTransactions(email: user, date: date).map { obj -> [Transaction] in
                 obj.map { $0.asDomain() }
             }
         }

@@ -12,7 +12,7 @@ protocol RealmDataBaseInterface {
     func createUser(user: RMUser) -> Single<Bool>
     func getUserInfo(email: String) -> Single<RMUser?>
     func login(email: String) -> Single<Bool>
-    func allTransactions(email: String) -> Single<[RMTransaction]>
+    func allTransactions(email: String, date: Date?) -> Single<[RMTransaction]>
     func createTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
     func updateTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
     func deleteTransaction(email: String, transaction: RMTransaction) -> Single<Bool>
@@ -62,10 +62,15 @@ final class RealmDataBase: RealmDataBaseInterface {
         }
     }
     
-    func allTransactions(email: String) -> Single<[RMTransaction]> {
+    func allTransactions(email: String, date: Date?) -> Single<[RMTransaction]> {
         Single<[RMTransaction]>.create { [weak self] single in
             if let user = self?.realm?.object(ofType: RMUser.self, forPrimaryKey: email) {
-                single(.success(Array(user.transactions)))
+                if let date = date {
+                    let transaction = user.transactions.filter("date BETWEEN %@", [date.startOfMonth(), date.endOfMonth()])
+                    single(.success(Array(transaction)))
+                } else {
+                    single(.success(Array(user.transactions)))
+                }
             } else {
                 single(.success([]))
             }

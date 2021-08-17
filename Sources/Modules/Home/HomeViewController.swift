@@ -7,6 +7,7 @@
 
 import UIKit
 import MJRefresh
+import PopupDialog
 
 final class HomeViewController: BaseTableViewViewController {
     
@@ -25,8 +26,9 @@ final class HomeViewController: BaseTableViewViewController {
     override func setupUI() {
         super.setupUI()
         
-        let addBtn = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAdd))
-        navigationItem.leftBarButtonItem = addBtn
+        let addBtn = UIBarButtonItem(title: "Add", style: .plain, target: self, action: #selector(handleAdd))
+        let filterBtn = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(handleFilter))
+        navigationItem.leftBarButtonItems = [addBtn, filterBtn]
         
         let logOutBtn = UIBarButtonItem(title: "LogOut", style: .plain, target: self, action: #selector(handleLogOut))
         navigationItem.rightBarButtonItem = logOutBtn
@@ -63,6 +65,31 @@ final class HomeViewController: BaseTableViewViewController {
     }
     
     @objc
+    func handleFilter() {
+        var selectedDate = Date()
+        let popup = PopupView(nibName: "PopupView", bundle: nil)
+        popup.loadViewIfNeeded()
+        popup.datePicker.onDateSelected = { month, year in
+            let gregorianCalendar = NSCalendar(calendarIdentifier: .gregorian)!
+            var date = DateComponents()
+            date.year = year
+            date.month = month
+            selectedDate = gregorianCalendar.date(from: date) ?? Date()
+        }
+        let cancelButton = CancelButton(title: "Clean Filter") { [weak self] in
+            guard let self = self else { return }
+            self.presenter.selectedRange.accept(.all)
+        }
+        let okButton = DefaultButton(title: "OK") { [weak self] in
+            guard let self = self else { return }
+            self.presenter.selectedRange.accept(.range(date: selectedDate))
+        }
+        let vc = PopupDialog(viewController: popup)
+        vc.addButtons([cancelButton, okButton])
+        present(vc, animated: true, completion: nil)
+    }
+    
+    @objc
     func handleLogOut() {
         presenter.handleLogOut()
     }
@@ -96,7 +123,9 @@ extension HomeViewController: UITableViewDelegate {
 extension Reactive where Base: HomeViewController {
     var userInfo: Binder<User> {
         Binder(base) { vc, user in
-            vc.header.config(user: user)
+            vc.header.config(user: user,
+                             range: vc.presenter.selectedRange.value,
+                             amount: vc.presenter.filtetedAmount.value)
         }
     }
 }

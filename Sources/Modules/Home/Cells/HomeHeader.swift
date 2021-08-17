@@ -12,11 +12,20 @@ class HomeHeader: UIView, NibOwnerLoadable {
     @IBOutlet private weak var nameLabel: UILabel!
     @IBOutlet private weak var emailLabel: UILabel!
     @IBOutlet private weak var totalAmountLabel: UILabel!
+    @IBOutlet private weak var dateRange: UILabel!
     
-    func config(user: User) {
+    func config(user: User, range: DateRange, amount: Int) {
         nameLabel.text = user.name
         emailLabel.text = user.email
-        totalAmountLabel.text = "\(user.totalAmount)"
+        totalAmountLabel.text = range == .all ? toFormatter(amount: user.totalAmount) : toFormatter(amount: amount)
+        dateRange.text = range.title
+    }
+    
+    private func toFormatter(amount: Int) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = .init(identifier: "vi_VN")
+        formatter.numberStyle = .currency
+        return formatter.string(from: amount as NSNumber)!
     }
 
 }

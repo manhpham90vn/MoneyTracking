@@ -26,5 +26,6 @@ target 'MyApp' do
   pod 'RxSwiftExt', '~> 5'
   pod 'RealmSwift'
   pod 'IQKeyboardManagerSwift'
+  pod 'PopupDialog', '~> 1.1'
 
 end

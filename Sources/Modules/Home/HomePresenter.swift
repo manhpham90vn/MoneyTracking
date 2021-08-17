@@ -14,6 +14,48 @@ protocol HomePresenterInterface: Presenter {
     func handleLogOut()
 }
 
+enum DateRange {
+    case all
+    case range(date: Date)
+    
+    var title: String {
+        switch self {
+        case .all:
+            return "All"
+        case let .range(date):
+            return "Date \(mapDateToString(date: date))"
+        }
+    }
+    
+    var date: Date? {
+        switch self {
+        case .all:
+            return nil
+        case let .range(date):
+            return date
+        }
+    }
+    
+    private func mapDateToString(date: Date) -> String {
+        let formater = DateFormatter()
+        formater.dateFormat = "yyyy/MM"
+        return formater.string(from: date)
+    }
+}
+
+extension DateRange: Equatable {
+    static func == (lhs: DateRange, rhs: DateRange) -> Bool {
+        switch (lhs, rhs) {
+        case (.all, .all):
+            return true
+        case let (.range(value1), .range(value2)):
+            return value1 == value2
+        default:
+            return false
+        }
+    }
+}
+
 final class HomePresenter: HomePresenterInterface, PresenterPageable {
 
     unowned let view: HomeViewInterface
@@ -34,6 +76,8 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
     let triggerRemoveAt = PublishRelay<Transaction>()
     let triggerSelect = PublishRelay<Transaction>()
     let userInfo = BehaviorRelay<User?>(value: nil)
+    let selectedRange = BehaviorRelay<DateRange>(value: .all)
+    let filtetedAmount = BehaviorRelay<Int>(value: 0)
     
     init(view: HomeViewInterface,
          router: HomeRouterInterface,
@@ -45,7 +89,7 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { $0.0.interactor.getAllItem().trackActivity($0.0.headerActivityIndicator) }
+                .flatMapLatest { $0.0.interactor.getAllItem(date: $0.0.selectedRange.value.date).trackActivity($0.0.headerActivityIndicator) }
             ~> elements,
             
             triggerRemoveAt
@@ -75,7 +119,30 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
                 .flatMapLatest { this, _ -> Single<User?> in
                     return this.interactor.getUserInfo()
                 }
-                ~> userInfo
+                ~> userInfo,
+            
+            selectedRange
+                .withUnretained(self)
+                .do(onNext: { this, _ in
+                    this.trigger.accept(())
+                })
+                .subscribe(),
+            
+            elements
+                .withUnretained(self)
+                .filter { this, _ in this.selectedRange.value.date != nil }
+                .subscribe(onNext: { result in
+                    var resultValue = 0
+                    for element in result.1 {
+                        switch element.type {
+                        case .deposits:
+                            resultValue += element.amount
+                        case .withdrawal:
+                            resultValue -= element.amount
+                        }
+                    }
+                    result.0.filtetedAmount.accept(resultValue)
+                })
         ]
     }
 
