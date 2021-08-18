@@ -29,7 +29,7 @@ final class HomeRouter: HomeRouterInterface, Router {
     }
     
     func toAdd() {
-        let vc = AppScenes.add(mode: .add).viewController
+        let vc = AppScenes.addEditTransaction(mode: .add).viewController
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -39,7 +39,7 @@ final class HomeRouter: HomeRouterInterface, Router {
     }
     
     func toUpdate(transaction: Transaction) {
-        let vc = AppScenes.add(mode: .edit(transaction: transaction)).viewController
+        let vc = AppScenes.addEditTransaction(mode: .edit(transaction: transaction)).viewController
         viewController.navigationController?.pushViewController(vc, animated: true)
     }
 

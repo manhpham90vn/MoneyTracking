@@ -15,8 +15,8 @@ class HomeHeader: UIView, NibOwnerLoadable {
     @IBOutlet private weak var dateRange: UILabel!
     
     func config(user: User, range: DateRange, amount: Int) {
-        nameLabel.text = user.name
-        emailLabel.text = user.email
+        nameLabel.text = "Username: \(user.name)"
+        emailLabel.text = "Email: \(user.email)"
         totalAmountLabel.text = range == .all ? toFormatter(amount: user.totalAmount) : toFormatter(amount: amount)
         dateRange.text = range.title
     }

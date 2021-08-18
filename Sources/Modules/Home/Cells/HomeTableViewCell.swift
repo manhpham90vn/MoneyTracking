@@ -14,9 +14,9 @@ final class HomeTableViewCell: UITableViewCell, NibReusable {
     @IBOutlet private weak var contentLabel: UILabel!
     
     func config(transaction: Transaction) {
-        contentLabel.text = transaction.content
-        dateLabel.text = mapDateToString(date: transaction.date)
-        amountLabel.text = "\(transaction.type.operator)\(toFormatter(amount: transaction.amount, type: transaction.currency))"
+        contentLabel.text = "Content: \(transaction.content)"
+        dateLabel.text = "Date: \(mapDateToString(date: transaction.date))"
+        amountLabel.text = "Amount: \(transaction.type.operator)\(toFormatter(amount: transaction.amount, type: transaction.currency))"
     }
     
     private func mapDateToString(date: Date) -> String {

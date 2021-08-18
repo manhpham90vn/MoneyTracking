@@ -21,9 +21,9 @@ enum DateRange {
     var title: String {
         switch self {
         case .all:
-            return "All"
+            return "Total amount"
         case let .range(date):
-            return "Date \(mapDateToString(date: date))"
+            return "Total amount of date \(mapDateToString(date: date))"
         }
     }
     

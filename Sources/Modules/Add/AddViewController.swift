@@ -51,7 +51,8 @@ final class AddViewController: BaseViewController {
             subview.tag = $0.rawValue
             subview.onClick = { [weak self] tag in
                 guard let self = self else { return }
-                self.selectCurrency.accept(Currency(rawValue: tag)!)
+                let currency = Currency(rawValue: tag)!
+                self.selectCurrency.accept(currency)
             }
             currencyStackView.addArrangedSubview(subview)
             subview.trailingAnchor.constraint(equalTo: currencyStackView.trailingAnchor).isActive = true
@@ -79,8 +80,8 @@ final class AddViewController: BaseViewController {
             amountTextField.text = String(transaction.amount)
             contentTextField.text = transaction.content
         }
-    }    
-
+    }
+    
     override func bindDatas() {
         super.bindDatas()
         
