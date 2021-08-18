@@ -36,6 +36,15 @@ enum DateRange {
         }
     }
     
+    var isFilter: Bool {
+        switch self {
+        case .all:
+            return false
+        case .range:
+            return true
+        }
+    }
+    
     private func mapDateToString(date: Date) -> String {
         let formater = DateFormatter()
         formater.dateFormat = "yyyy/MM"
@@ -89,7 +98,12 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
         disposeBag ~ [
             trigger
                 .withUnretained(self)
-                .flatMapLatest { $0.0.interactor.getAllItem(date: $0.0.selectedRange.value.date).trackActivity($0.0.headerActivityIndicator) }
+                .flatMapLatest {
+                    $0.0.interactor
+                    .getAllItem(date: $0.0.selectedRange.value.date)
+                    .trackActivity($0.0.headerActivityIndicator)
+                    .asDriverOnErrorJustComplete()
+                }
             ~> elements,
             
             triggerRemoveAt
@@ -122,6 +136,7 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
                 ~> userInfo,
             
             selectedRange
+                .skip(1)
                 .withUnretained(self)
                 .do(onNext: { this, _ in
                     this.trigger.accept(())
@@ -130,7 +145,7 @@ final class HomePresenter: HomePresenterInterface, PresenterPageable {
             
             elements
                 .withUnretained(self)
-                .filter { this, _ in this.selectedRange.value.date != nil }
+                .filter { this, _ in this.selectedRange.value.isFilter }
                 .subscribe(onNext: { result in
                     var resultValue = 0
                     for element in result.1 {
