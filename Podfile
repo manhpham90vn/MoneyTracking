@@ -16,8 +16,6 @@ target 'MyApp' do
   pod 'SwiftyUserDefaults', '~> 5.0'
   pod 'Resolver'
 
-  pod 'Firebase/Analytics'
-  pod 'Firebase/Crashlytics'
   pod 'Anchorage'
   pod 'MJRefresh'
   pod 'Then'
